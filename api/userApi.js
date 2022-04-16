@@ -33,7 +33,8 @@ router.route('/login').post(async (req, res) => {
         libid: user.libid,
         apikey: user.apikey,
         cdn: user.cdn,
-        token: generateToken(user._id)
+        token: generateToken(user._id),
+        isAdmin: user.isAdmin
       }
     });
   } else {
@@ -47,12 +48,8 @@ router.route('/login').post(async (req, res) => {
 
 
 router.route('/register').post(async (req, res) => {
+  
   const { name, email, password } = req.body;
-
-  const headers = {
-    AccessKey: '10fec3c6-bb8e-44ab-862a-a1c93ee568fe618cd3d1-100d-404f-857b-b893761a5913'
-  };
-
 
   const userExists = await User.findOne({ email });
 
@@ -63,6 +60,35 @@ router.route('/register').post(async (req, res) => {
       message: "User already exists",
     });
   }
+
+  if (req.body.isAdmin) {
+
+    const user = await new User({
+      name,
+      email,
+      password,
+      isAdmin: true,
+      apikey: null,
+      libid: null
+    });
+
+    const createdEntry = await user.save();
+
+    return res.json({
+      name,
+      email,
+      password,
+      isAdmin: true
+    })
+
+  }
+
+  const headers = {
+    AccessKey: '10fec3c6-bb8e-44ab-862a-a1c93ee568fe618cd3d1-100d-404f-857b-b893761a5913'
+  };
+
+
+
 
 
   await axios
@@ -89,7 +115,8 @@ router.route('/register').post(async (req, res) => {
             res.status(200).json({
               code: 200,
               message: "user created successfully",
-              data: createdEntry
+              data: createdEntry,
+              token: generateToken(user._id)
             });
           } else {
             res.status(200).json({
@@ -103,10 +130,7 @@ router.route('/register').post(async (req, res) => {
     })
     .catch(err => console.log(err))
 
-
-
 })
-
 
 
 

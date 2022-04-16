@@ -9,37 +9,44 @@ import user from "./api/userApi.js"
 import addon from "./api/addOnApi.js"
 
 
+
+
+
+
 dotenv.config();
 const app = express();
 
+app.use(cors());
 
 connectDB();
-            
-  app.use(morgan('common'));
-    app.use(cors());
 
-  app.use(express.json());
 
-  app.use('/api/user', user);
-  app.use('/api/addon', addon);
 
-  const port = process.env.PORT || 4000;
-  
-  
-  app.use(express.json());
-  
-  app.get('/', (req, res) => {
-      res.json({
-          message: 'API IS RUNNING',
-      })
+app.use(morgan('common'));
+
+
+app.use(express.json());
+
+app.use('/api/user', user);
+app.use('/api/addon', addon);
+
+const port = process.env.PORT || 4000;
+
+
+app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.json({
+    message: 'API IS RUNNING',
   })
-  
+})
+
 //   app.use('/api/logs', logs);
-  
-  app.use(notFound);
-  app.use(errorHandler)
-  
-  
-  app.listen(port, () => {
-      console.log(`listening at http://localhost:${port}`);
-  })
+
+app.use(notFound);
+app.use(errorHandler)
+
+
+app.listen(port, () => {
+  console.log(`listening at http://localhost:${port}`);
+})

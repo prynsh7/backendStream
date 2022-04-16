@@ -18,11 +18,9 @@ const userSchema = mongoose.Schema(
       },
       libid: {
         type: Number,
-        required: true,
       },
       apikey: {
         type: String,
-        required: true,
       },
       cdn: {
         type: String,
